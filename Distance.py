@@ -131,15 +131,20 @@ plt.title(star)
 plt.legend()
 plt.savefig('magnitudes_'+star+'.pdf')
 plt.clf()
-plt.show
 
-t_fit = np.linspace(0, 35, 1000)
+# Plot the data within one period including the fit
+time_new = times
+for i in range(len(times)):
+	while time_new[i] > Period:
+		time_new[i] -= Period
+
+t_fit = np.linspace(0, Period, 1000)
 y_fit = LombScargle(times, magnitudes, magnitudes_err).model(t_fit, freq)
 f = plt.figure()
 ax = f.add_subplot(111)
 ax.xaxis.set_ticks_position('both')
 ax.yaxis.set_ticks_position('both')
-plt.errorbar(times, magnitudes, magnitudes_err, time_err, 'r.', label="Magnitudes")
+plt.errorbar(time_new, magnitudes, magnitudes_err, time_err, 'r.', label="Data points all plotted\nin the same period")
 plt.plot(t_fit, y_fit, 'k--', label="Fit of the pulsation of the star")
 plt.xlabel('time in days [d]')
 plt.ylabel('magnitude [m]')
@@ -150,7 +155,6 @@ lgd1 = plt.legend(bbox_to_anchor=(1.03, 1.0))
 art1.append(lgd1)
 plt.savefig('Period_'+star+'.pdf', additional_artists=art1, bbox_inches='tight')
 plt.clf()
-plt.show()
 
 ### Calculation of the Distance
 mean_mag = min(y_fit) + (max(y_fit)-min(y_fit))/2
